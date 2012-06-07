@@ -83,7 +83,7 @@ end
 
 badtrials = find(EEG.reject.rejmanual);
 if ~isempty(badtrials)
-    EEG = pop_rejepoch(EEG, badtrials, prompt);
+    EEG = pop_select(EEG, 'notrial', badtrials);
     EEG.rejepoch = badtrials;
 end
 
