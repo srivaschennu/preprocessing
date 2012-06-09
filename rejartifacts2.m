@@ -45,6 +45,10 @@ if prompt
 end
 
 %% DEAL WITH BAD CHANNELS AND TRIALS
+
+badchannels = find(cell2mat({EEG.chanlocs.badchan}));
+badtrials = find(EEG.reject.rejmanual);
+
 if prompt && (~exist('pbadchan','var') || isempty(pbadchan))
     pbadchanmodes = {'Delete','Interpolate','Do Nothing'};
     [pbadchan,ok] = listdlg('ListString',pbadchanmodes,'SelectionMode','single','Name','Bad Channels',...
@@ -64,8 +68,8 @@ if pbadchan == 1 || pbadchan == 2
         EEG.rejchan = [];
     end
     
-    badchannels = find(cell2mat({EEG.chanlocs.badchan}));
     if ~isempty(badchannels)
+        fprintf('\nDeleting bad channels...\n');
         EEG.rejchan = [EEG.rejchan EEG.chanlocs(badchannels)];
         EEG = pop_select(EEG,'nochannel',badchannels);
     end
@@ -75,16 +79,20 @@ if pbadchan == 1 || pbadchan == 2
     end
     
     if pbadchan == 2
+        fprintf('\nInterpolating bad channels...\n');
         EEG = eeg_interp(EEG, EEG.rejchan);
     end
 else
     fprintf('No channels deleted.\n');
 end
 
-badtrials = find(EEG.reject.rejmanual);
+
 if ~isempty(badtrials)
+    fprintf('\nDeleting bad trials...\n');
     EEG = pop_select(EEG, 'notrial', badtrials);
     EEG.rejepoch = badtrials;
+else
+    fprintf('\nNo trials deleted.\n');
 end
 
 %% RE-REFERENCING
