@@ -40,7 +40,12 @@ if ok
             fprintf('Referencing to laplacian average.\n');
             EEG = pop_select(EEG,'nochannel',refchan);
             if ~isempty(czidx)
-                EEG.chanlocs(end+1) = EEG.chaninfo.ndchanlocs(czidx);
+                EEG.chanlocs(end+1).labels = EEG.chaninfo.ndchanlocs(czidx).labels;
+                fieldloc = fieldnames(EEG.chaninfo.ndchanlocs(czidx));
+                for ind = 1:length(fieldloc)
+                    EEG.chanlocs(end).(fieldloc{ind}) = EEG.chaninfo.ndchanlocs(czidx).(fieldloc{ind});
+                end
+                EEG.chanlocs(end).type = '';
                 EEG.chaninfo.ndchanlocs(czidx) = [];
                 EEG.data(end+1,:,:) = 0;
                 EEG.nbchan = EEG.nbchan + 1;
