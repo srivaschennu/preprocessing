@@ -20,6 +20,7 @@ else
     ok = 1;
 end
 
+EEG.chaninfo.nodatchans = EEG.chaninfo.ndchanlocs;
 czidx = find(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels}));
 
 refchan = {'E57' 'E100'};
@@ -32,10 +33,11 @@ if ok
     switch refmode
         case 1
             fprintf('Referencing to common average.\n');
-            %EEG = pop_select(EEG,'nochannel',refchan);
+            EEG = pop_select(EEG,'nochannel',refchan);
             EEG = pop_reref( EEG, [], 'exclude', badchannels,'refloc',EEG.chaninfo.ndchanlocs(czidx));
             EEG.ref = 'common';
- 
+            EEG.chaninfo.ndchanlocs(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels})) = [];
+            
         case 2
             fprintf('Referencing to laplacian average.\n');
             EEG = pop_select(EEG,'nochannel',refchan);
@@ -47,6 +49,7 @@ if ok
                 end
                 EEG.chanlocs(end).type = '';
                 EEG.chaninfo.ndchanlocs(czidx) = [];
+                EEG.chaninfo.nodatchans(czidx) = [];
                 EEG.data(end+1,:,:) = 0;
                 EEG.nbchan = EEG.nbchan + 1;
             end
