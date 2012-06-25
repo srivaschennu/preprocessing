@@ -24,8 +24,8 @@ if isfield(EEG.chaninfo,'ndchanlocs')
     EEG.chaninfo.nodatchans = EEG.chaninfo.ndchanlocs;
 end
 
-if isstruct(EEG.chaninfo.nodatchans)
-    czidx = find(strcmp('Cz',{EEG.chaninfo.nodatchans.labels}));
+if isstruct(EEG.chaninfo.ndchanlocs)
+    czidx = find(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels}));
 else
     czidx = [];
 end
@@ -40,26 +40,26 @@ if ok
     switch refmode
         case 1
             fprintf('Referencing to common average.\n');
-            EEG = pop_select(EEG,'nochannel',refchan);
             if isempty(czidx)
                 EEG = pop_reref( EEG, [], 'exclude', badchannels);
             else
-                EEG = pop_reref( EEG, [], 'exclude', badchannels,'refloc',EEG.chaninfo.nodatchans(czidx));
-                EEG.chaninfo.nodatchans(strcmp('Cz',{EEG.chaninfo.nodatchans.labels})) = [];
+                EEG = pop_reref( EEG, [], 'exclude', badchannels,'refloc',EEG.chaninfo.ndchanlocs(czidx));
+                EEG.chaninfo.ndchanlocs(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels})) = [];
             end
-            EEG.ref = 'average';
+            EEG = pop_select(EEG,'nochannel',refchan);
+            EEG.ref = 'averef';
             
         case 2
             fprintf('Referencing to laplacian average.\n');
             EEG = pop_select(EEG,'nochannel',refchan);
             if ~isempty(czidx)
-                EEG.chanlocs(end+1).labels = EEG.chaninfo.nodatchans(czidx).labels;
-                fieldloc = fieldnames(EEG.chaninfo.nodatchans(czidx));
+                EEG.chanlocs(end+1).labels = EEG.chaninfo.ndchanlocs(czidx).labels;
+                fieldloc = fieldnames(EEG.chaninfo.ndchanlocs(czidx));
                 for ind = 1:length(fieldloc)
-                    EEG.chanlocs(end).(fieldloc{ind}) = EEG.chaninfo.nodatchans(czidx).(fieldloc{ind});
+                    EEG.chanlocs(end).(fieldloc{ind}) = EEG.chaninfo.ndchanlocs(czidx).(fieldloc{ind});
                 end
                 EEG.chanlocs(end).type = '';
-                EEG.chaninfo.nodatchans(czidx) = [];
+                EEG.chaninfo.ndchanlocs(czidx) = [];
                 EEG.data(end+1,:,:) = 0;
                 EEG.nbchan = EEG.nbchan + 1;
             end
@@ -73,8 +73,8 @@ if ok
             if isempty(czidx)
                 EEG = pop_reref( EEG, refchan, 'exclude', badchannels);
             else
-                EEG = pop_reref( EEG, refchan, 'exclude', badchannels,'refloc',EEG.chaninfo.nodatchans(czidx));
-                EEG.chaninfo.nodatchans(strcmp('Cz',{EEG.chaninfo.nodatchans.labels})) = [];
+                EEG = pop_reref( EEG, refchan, 'exclude', badchannels,'refloc',EEG.chaninfo.ndchanlocs(czidx));
+                EEG.chaninfo.ndchanlocs(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels})) = [];
             end
             
         case 4
