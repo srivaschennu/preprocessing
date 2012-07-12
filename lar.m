@@ -1,11 +1,21 @@
 function Data = lar(Data,chanlocs,badchannels)
-%Data assumed in format: epochs X frames X channels
+%Data - assumed in format: epochs X frames X channels
+%chanlocs - N x 3 array of X Y Z locations of channels
+%badchannels - index of bad channels if any. Else, specify []
+
+%%% PARAMETERS for laplacian averaging
+
+% number of surrounding neighbours of each channel to use for laplacian
+% derivation
+numneighbours = 6;
+
+%%%
 
 if size(chanlocs,1) ~= size(Data,3)
     error('Number of channels and channel locations do not match.');
 end
 
-numneighbours = 6;
+
 
 OrigData = Data;
 goodchannels = setdiff(1:size(Data,3),badchannels);
