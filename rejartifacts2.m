@@ -98,7 +98,7 @@ end
 %% RE-REFERENCING
 EEG = rereference(EEG,refmode);
 
-if prompt
+if prompt && exist([EEG.filepath EEG.filename],'file')
     choice = questdlg(sprintf('Overwrite %s?',EEG.filename),...
         mfilename,'Yes','No','Yes');
     

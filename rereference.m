@@ -20,11 +20,13 @@ else
     ok = 1;
 end
 
-if isfield(EEG.chaninfo,'ndchanlocs')
-    EEG.chaninfo.nodatchans = EEG.chaninfo.ndchanlocs;
+if refmode == 4
+    fprintf('Data reference unchanged.\n');
+    return;
 end
 
-if isstruct(EEG.chaninfo.ndchanlocs)
+if isfield(EEG.chaninfo,'ndchanlocs') && isstruct(EEG.chaninfo.ndchanlocs)
+    EEG.chaninfo.nodatchans = EEG.chaninfo.ndchanlocs;
     czidx = find(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels}));
 else
     czidx = [];
@@ -43,6 +45,12 @@ if ok
             if isempty(czidx)
                 EEG = pop_reref( EEG, [], 'exclude', badchannels);
             else
+                fieldloc = fieldnames(EEG.chanlocs);
+                for ind = 1:length(fieldloc)
+                    if ~isfield(EEG.chaninfo.ndchanlocs(czidx),fieldloc{ind})
+                        EEG.chaninfo.ndchanlocs(czidx).(fieldloc{ind}) = [];
+                    end
+                end
                 EEG = pop_reref( EEG, [], 'exclude', badchannels,'refloc',EEG.chaninfo.ndchanlocs(czidx));
                 EEG.chaninfo.ndchanlocs(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels})) = [];
             end
@@ -73,9 +81,16 @@ if ok
             if isempty(czidx)
                 EEG = pop_reref( EEG, refchan, 'exclude', badchannels);
             else
+                fieldloc = fieldnames(EEG.chanlocs);
+                for ind = 1:length(fieldloc)
+                    if ~isfield(EEG.chaninfo.ndchanlocs(czidx),fieldloc{ind})
+                        EEG.chaninfo.ndchanlocs(czidx).(fieldloc{ind}) = [];
+                    end
+                end
                 EEG = pop_reref( EEG, refchan, 'exclude', badchannels,'refloc',EEG.chaninfo.ndchanlocs(czidx));
                 EEG.chaninfo.ndchanlocs(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels})) = [];
             end
+            EEG.ref = cell2mat({EEG.chanlocs(refchan).labels});
             
         case 4
             fprintf('Data reference unchanged.\n');

@@ -1,20 +1,20 @@
-function rejectic(basename,prompt,skip)
+function rejectic(basename,varargin)
 
 loadpaths
 
-if ~exist('prompt','var') || isempty(prompt)
-    prompt = true;
-end
+param = finputcheck(varargin, { ...
+    'prompt' , 'string' , {'on','off'}, 'on'; ...
+    'skip' , 'string' , {'on','off'}, 'off'; ...
+    'sortorder', 'integer', [], []; ...
+    });
 
-if ~exist('skip','var') || isempty(skip)
-    skip = false;
-end
 
 destfile = [basename '.set'];
 filename = [basename '_epochs.set'];
 EEG = pop_loadset('filename', filename, 'filepath', filepath);
 
-if ~skip
+
+if strcmp(param.skip,'off')
     if isempty(EEG.icaweights)
         EEG = computeic(EEG);
         if ~isfield(EEG.reject,'gcompreject') || isempty(EEG.reject.gcompreject)
@@ -28,27 +28,40 @@ if ~skip
     assignin('base','EEG',EEG);
     evalin('base','[ALLEEG EEG index] = eeg_store(ALLEEG,EEG,0);');
     
-    if prompt
-        EEG = VisEd(EEG,2,['[' num2str(1:size(EEG.icaweights,1)) ']'],{});
-        comptimefig = gcf;
+    if strcmp(param.prompt,'on')
         
-        for comp = 0:35:size(EEG.icaweights,1)
-            choice = questdlg(sprintf('Plot component maps %d-%d?',comp+1,min(comp+35,size(EEG.icaweights,1))),...
+        if isempty(param.sortorder)
+            param.sortorder = 1:size(EEG.icaweights,1);
+        end
+        
+        EEG = VisEd(EEG,2,['[' num2str(param.sortorder) ']'],{});
+        comptimefig = gcf;
+        g = get(comptimefig, 'UserData');
+        badchan_old = cell2mat({g.eloc_file.badchan});
+        
+        for comp = 0:35:length(param.sortorder);
+            choice = questdlg(sprintf('Plot component maps %d-%d?',comp+1,min(comp+35,length(param.sortorder))),...
                 mfilename,'Yes','No','Yes');
             if ~strcmp(choice,'Yes')
                 break;
             end
-            pop_selectcomps(EEG, comp+1:min(comp+35,size(EEG.icaweights,1)));
+            pop_selectcomps(EEG, param.sortorder(comp+1:min(comp+35,length(param.sortorder))));
             uiwait;
             EEG = evalin('base','EEG');
             
             g = get(comptimefig, 'UserData');
-            for c = 1:length(EEG.reject.gcompreject)
-                g.eloc_file(c).badchan = EEG.reject.gcompreject(c);
+            badchan_new = cell2mat({g.eloc_file.badchan});
+            
+            plotcomp = find(EEG.reject.gcompreject(param.sortorder));
+            for c = plotcomp
+                if badchan_old(c) == 0 && (badchan_new(c) == 1 || EEG.reject.gcompreject(param.sortorder(c)) == 1)
+                    g.eloc_file(c).badchan = 1;
+                elseif badchan_old(c) == 1 && (badchan_new(c) == 0 || EEG.reject.gcompreject(param.sortorder(c)) == 0)
+                    g.eloc_file(c).badchan = 0;
+                end
             end
             set(comptimefig, 'UserData', g);
             eegplot('drawp',0,[],comptimefig);
-            
         end
         
         if ishandle(comptimefig)
@@ -59,7 +72,7 @@ if ~skip
         
         EEG.saved = 'no';
         
-        if prompt
+        if strcmp(param.prompt,'on')
             choice = questdlg(sprintf('Overwrite %s?',EEG.filename),...
                 mfilename,'Yes','No','Yes');
             
@@ -78,7 +91,7 @@ if ~skip
     fprintf('comp%d, ',rejectics(1:end));
     fprintf('\n');
     
-    if prompt
+    if strcmp(param.prompt,'on')
         choice = questdlg(sprintf('Reject marked ICs and overwrite %s?',destfile),...
             mfilename,'Yes','No','Yes');
         
