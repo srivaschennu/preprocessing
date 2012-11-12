@@ -78,6 +78,8 @@ if ok
         case 3
             refchan = setdiff(refchan,badchannels);
             fprintf('Referencing to %s.\n',cell2mat({EEG.chanlocs(refchan).labels}));
+            EEG.ref = cell2mat({EEG.chanlocs(refchan).labels});
+            
             if isempty(czidx)
                 EEG = pop_reref( EEG, refchan, 'exclude', badchannels);
             else
@@ -90,7 +92,6 @@ if ok
                 EEG = pop_reref( EEG, refchan, 'exclude', badchannels,'refloc',EEG.chaninfo.ndchanlocs(czidx));
                 EEG.chaninfo.ndchanlocs(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels})) = [];
             end
-            EEG.ref = cell2mat({EEG.chanlocs(refchan).labels});
             
         case 4
             fprintf('Data reference unchanged.\n');
