@@ -90,7 +90,11 @@ end
 if ~isempty(badtrials)
     fprintf('\nDeleting bad trials...\n');
     EEG = pop_select(EEG, 'notrial', badtrials);
-    EEG.rejepoch = badtrials;
+    if isfield(EEG,'rejepoch')
+        EEG.rejepoch = [EEG.rejepoch badtrials];
+    else
+        EEG.rejepoch = badtrials;
+    end
 else
     fprintf('\nNo trials deleted.\n');
 end
