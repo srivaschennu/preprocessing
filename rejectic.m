@@ -49,19 +49,21 @@ if strcmp(param.skip,'off')
             uiwait;
             EEG = evalin('base','EEG');
             
-            g = get(comptimefig, 'UserData');
-            badchan_new = cell2mat({g.eloc_file.badchan});
-            
-            plotcomp = find(EEG.reject.gcompreject(param.sortorder));
-            for c = plotcomp
-                if badchan_old(c) == 0 && (badchan_new(c) == 1 || EEG.reject.gcompreject(param.sortorder(c)) == 1)
-                    g.eloc_file(c).badchan = 1;
-                elseif badchan_old(c) == 1 && (badchan_new(c) == 0 || EEG.reject.gcompreject(param.sortorder(c)) == 0)
-                    g.eloc_file(c).badchan = 0;
+            if ishandle(comptimefig)
+                g = get(comptimefig, 'UserData');
+                badchan_new = cell2mat({g.eloc_file.badchan});
+                
+                plotcomp = find(EEG.reject.gcompreject(param.sortorder));
+                for c = plotcomp
+                    if badchan_old(c) == 0 && (badchan_new(c) == 1 || EEG.reject.gcompreject(param.sortorder(c)) == 1)
+                        g.eloc_file(c).badchan = 1;
+                    elseif badchan_old(c) == 1 && (badchan_new(c) == 0 || EEG.reject.gcompreject(param.sortorder(c)) == 0)
+                        g.eloc_file(c).badchan = 0;
+                    end
                 end
+                set(comptimefig, 'UserData', g);
+                eegplot('drawp',0,[],comptimefig);
             end
-            set(comptimefig, 'UserData', g);
-            eegplot('drawp',0,[],comptimefig);
         end
         
         if ishandle(comptimefig)
