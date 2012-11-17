@@ -36,6 +36,7 @@ if strcmp(param.skip,'off')
         
         EEG = VisEd(EEG,2,['[' num2str(param.sortorder) ']'],{});
         comptimefig = gcf;
+        set(comptimefig,'Name',basename);
         g = get(comptimefig, 'UserData');
         badchan_old = cell2mat({g.eloc_file.badchan});
         

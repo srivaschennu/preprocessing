@@ -40,6 +40,7 @@ if prompt
     assignin('base','EEG',EEG);
     evalin('base','[ALLEEG EEG index] = eeg_store(ALLEEG,EEG,0);');
     VisEd(EEG,1,['[' num2str(1:EEG.nbchan) ']'],{});
+    set(gcf,'Name',basename);
     uiwait
     EEG = evalin('base','EEG');
 end
