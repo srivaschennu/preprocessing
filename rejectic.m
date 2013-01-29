@@ -75,13 +75,11 @@ if strcmp(param.skip,'off')
         
         EEG.saved = 'no';
         
-        if strcmp(param.prompt,'on')
-            choice = questdlg(sprintf('Overwrite %s?',EEG.filename),...
-                mfilename,'Yes','No','Yes');
-            
-            if ~strcmp(choice,'Yes')
-                return;
-            end
+        choice = questdlg(sprintf('Overwrite %s?',EEG.filename),...
+            mfilename,'Yes','No','Yes');
+        
+        if ~strcmp(choice,'Yes')
+            return;
         end
         
         fprintf('Resaving to %s%s.\n',EEG.filepath,EEG.filename);
