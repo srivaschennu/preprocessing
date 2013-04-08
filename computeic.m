@@ -1,12 +1,13 @@
-function EEG = computeic(filename,runmybinica,pcacheck)
+function EEG = computeic(filename,icatype,pcacheck)
 
 loadpaths
 
-if ~exist('runmybinica','var') || isempty(runmybinica)
-    runmybinica = false;
+if ~exist('icatype','var') || isempty(icatype)
+    icatype = 'runica';
 end
 
-if ~exist('pcacheck','var') || isempty(pcacheck)
+if (strcmp(icatype,'runica') || strcmp(icatype,'binica') || strcmp(icatype,'mybinica')) && ...
+    (~exist('pcacheck','var') || isempty(pcacheck))
     pcacheck = true;
 end
 
@@ -31,23 +32,27 @@ if isfield(EEG.chanlocs,'badchan')
     end
 end
 
-if pcacheck
-    kfactor = 60;
-    pcadim = round(sqrt(EEG.pnts*EEG.trials/kfactor));
-    if EEG.nbchan > pcadim
-        fprintf('Too many channels for stable ICA. Data will be reduced to %d dimensions using PCA.\n',pcadim);
-        icaopts = {'extended' 1 'pca' pcadim};
+if strcmp(icatype,'runica') || strcmp(icatype,'binica') || strcmp(icatype,'mybinica')
+    if pcacheck
+        kfactor = 60;
+        pcadim = round(sqrt(EEG.pnts*EEG.trials/kfactor));
+        if EEG.nbchan > pcadim
+            fprintf('Too many channels for stable ICA. Data will be reduced to %d dimensions using PCA.\n',pcadim);
+            icaopts = {'extended' 1 'pca' pcadim};
+        else
+            icaopts = {'extended' 1};
+        end
     else
         icaopts = {'extended' 1};
     end
 else
-    icaopts = {'extended' 1};
+    icaopts = {};
 end
 
-if runmybinica
+if strcmp(icatype,'mybinica')
     EEG = mybinica(EEG);
 else
-    EEG = pop_runica(EEG, 'icatype','runica','dataset',1,'chanind',1:EEG.nbchan,'options',icaopts);
+    EEG = pop_runica(EEG, 'icatype',icatype,'dataset',1,'chanind',1:EEG.nbchan,'options',icaopts);
 end
 
 if ischar(filename) && ~isempty(EEG.icaweights)
