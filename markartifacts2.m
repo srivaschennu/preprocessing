@@ -319,4 +319,3 @@ function trialEdit_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of trialEdit as text
 %        str2double(get(hObject,'String')) returns contents of trialEdit as a double
-nts of trialEdit as a double
