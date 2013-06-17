@@ -28,6 +28,9 @@ end
 if isfield(EEG.chaninfo,'ndchanlocs') && isstruct(EEG.chaninfo.ndchanlocs)
     EEG.chaninfo.nodatchans = EEG.chaninfo.ndchanlocs;
     czidx = find(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels}));
+elseif isfield(EEG.chaninfo,'nodatchans') && isstruct(EEG.chaninfo.nodatchans)
+    EEG.chaninfo.ndchanlocs = EEG.chaninfo.nodatchans;
+    czidx = find(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels}));
 else
     czidx = [];
 end
