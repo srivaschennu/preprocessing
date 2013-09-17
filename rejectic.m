@@ -54,11 +54,10 @@ if strcmp(param.skip,'off')
                 g = get(comptimefig, 'UserData');
                 badchan_new = cell2mat({g.eloc_file.badchan});
                 
-                plotcomp = param.sortorder;
-                for c = plotcomp
-                    if badchan_old(c) == 0 && (badchan_new(c) == 1 || EEG.reject.gcompreject(c) == 1)
+                for c = 1:length(badchan_old)
+                    if badchan_old(c) == 0 && (badchan_new(c) == 1 || EEG.reject.gcompreject(param.sortorder(c)) == 1)
                         g.eloc_file(c).badchan = 1;
-                    elseif badchan_old(c) == 1 && (badchan_new(c) == 0 || EEG.reject.gcompreject(c) == 0)
+                    elseif badchan_old(c) == 1 && (badchan_new(c) == 0 || EEG.reject.gcompreject(param.sortorder(c)) == 0)
                         g.eloc_file(c).badchan = 0;
                     end
                 end
