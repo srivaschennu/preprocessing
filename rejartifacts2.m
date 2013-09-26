@@ -1,7 +1,11 @@
 function rejartifacts2(basename,pbadchan,refmode,prompt,varsort,chanvarthresh,trialvarthresh)
 
-% pbadchan %1 - delete bad channels; 2 - interpolate bad channels; 3 - do nothing
-% refmode %1 = common average 2 = laplacian average 3 = linked mastoid 4 = none
+% pbadchan 1 - delete bad channels; 2 - interpolate bad channels; 3 - do nothing
+% refmode 1 = common average 2 = laplacian average 3 = linked mastoid 4 = none
+% prompt 1 = manual mode 0 = automatic
+% varsort 1 = display channel and trial variance 0 = off
+% chanvarthresh default = 500
+% trialvarthresh default = 250
 
 if ~exist('chanvarthresh','var') || isempty(chanvarthresh)
     chanvarthresh = 500;
@@ -84,6 +88,7 @@ if pbadchan == 1 || pbadchan == 2
         EEG = eeg_interp(EEG, EEG.rejchan);
     end
 else
+    EEG.rejchan = [];
     fprintf('No channels deleted.\n');
 end
 
@@ -97,6 +102,7 @@ if ~isempty(badtrials)
         EEG.rejepoch = badtrials;
     end
 else
+    EEG.rejepoch = [];
     fprintf('\nNo trials deleted.\n');
 end
 
