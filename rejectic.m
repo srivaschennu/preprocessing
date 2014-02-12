@@ -40,13 +40,13 @@ if strcmp(param.skip,'off')
         g = get(comptimefig, 'UserData');
         badchan_old = cell2mat({g.eloc_file.badchan});
         
-        for comp = 0:35:length(param.sortorder);
-            choice = questdlg(sprintf('Plot component maps %d-%d?',comp+1,min(comp+35,length(param.sortorder))),...
+        for comp = 1:35:length(param.sortorder);
+            choice = questdlg(sprintf('Plot component maps %d-%d?',comp,min(comp+34,length(param.sortorder))),...
                 mfilename,'Yes','No','Yes');
             if ~strcmp(choice,'Yes')
                 break;
             end
-            pop_selectcomps(EEG, param.sortorder(comp+1:min(comp+35,length(param.sortorder))));
+            pop_selectcomps(EEG, param.sortorder(comp:min(comp+34,length(param.sortorder))));
             uiwait;
             EEG = evalin('base','EEG');
             
