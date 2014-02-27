@@ -57,7 +57,7 @@ if ok
                 EEG = pop_reref( EEG, [], 'exclude', badchannels,'refloc',EEG.chaninfo.ndchanlocs(czidx));
                 EEG.chaninfo.ndchanlocs(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels})) = [];
             end
-            EEG = pop_select(EEG,'nochannel',refchan);
+%             EEG = pop_select(EEG,'nochannel',refchan);
             EEG.ref = 'averef';
             
         case 2
