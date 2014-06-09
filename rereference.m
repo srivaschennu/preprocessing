@@ -13,7 +13,7 @@ else
 end
 
 if ~exist('refmode','var') || isempty(refmode)
-    refmodes = {'Common','Laplacian','Linked Mastoid','None'};
+    refmodes = {'Common','Laplacian','Linked Mastoid','None','Current Source Density'};
     [refmode,ok] = listdlg('ListString',refmodes,'SelectionMode','single','Name','Re-referencing',...
         'PromptString','Choose re-referencing type');
 else
@@ -74,7 +74,10 @@ if ok
                 EEG.data(end+1,:,:) = 0;
                 EEG.nbchan = EEG.nbchan + 1;
             end
-            chanlocs = cat(2,cell2mat({EEG.chanlocs.X})',cell2mat({EEG.chanlocs.Y})',cell2mat({EEG.chanlocs.Z})');
+            % EEGLAB has nose direction as X-axis and right ear direction
+            % as Y-axis, whereas cart2sph expects the reverse. Hence swap X
+            % and Y below
+            chanlocs = cat(2,cell2mat({EEG.chanlocs.Y})',cell2mat({EEG.chanlocs.X})',cell2mat({EEG.chanlocs.Z})');
             EEG.data = permute(lar(permute(EEG.data,[3 2 1]),chanlocs,badchannels),[3 2 1]);
             EEG.ref = 'laplacian';
             
@@ -99,5 +102,31 @@ if ok
         case 4
             fprintf('Data reference unchanged.\n');
             return;
+            
+        case 5
+            fprintf('Computing current source density.\n');
+            EEG = pop_select(EEG,'nochannel',refchan);
+            if ~isempty(czidx)
+                EEG.chanlocs(end+1).labels = EEG.chaninfo.ndchanlocs(czidx).labels;
+                fieldloc = fieldnames(EEG.chaninfo.ndchanlocs(czidx));
+                for ind = 1:length(fieldloc)
+                    EEG.chanlocs(end).(fieldloc{ind}) = EEG.chaninfo.ndchanlocs(czidx).(fieldloc{ind});
+                end
+                EEG.chanlocs(end).type = '';
+                EEG.chaninfo.ndchanlocs(czidx) = [];
+                EEG.data(end+1,:,:) = 0;
+                EEG.nbchan = EEG.nbchan + 1;
+            end
+            % EEGLAB has nose direction as X-axis and right ear direction
+            % as Y-axis, whereas cart2sph expects the reverse. Hence swap X
+            % and Y below            
+            chanlocs = cat(2,cell2mat({EEG.chanlocs.Y})',cell2mat({EEG.chanlocs.X})',cell2mat({EEG.chanlocs.Z})');
+            [sph.theta, sph.phi] = cart2sph(chanlocs(:,1),chanlocs(:,2),chanlocs(:,3));
+            sph.theta = (180/pi) * sph.theta;
+            sph.phi = (180/pi) * sph.phi;
+            sph.lab = {EEG.chanlocs.labels}';
+            [G,H] = GetGH(sph);
+            EEG.data = double(CSD(single(EEG.data),G,H));
+            EEG.ref = 'csd';
     end
 end
