@@ -114,6 +114,7 @@ if ok
                 end
                 EEG.chanlocs(end).type = '';
                 EEG.chaninfo.ndchanlocs(czidx) = [];
+                EEG.chaninfo.nodatchans(czidx) = [];
                 EEG.data(end+1,:,:) = 0;
                 EEG.nbchan = EEG.nbchan + 1;
             end
