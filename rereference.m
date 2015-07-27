@@ -5,6 +5,7 @@ function EEG = rereference(EEG,refmode)
 %2 = laplacian average
 %3 = linked mastoid
 %4 = none
+%5 = current source density
 
 if isfield(EEG.chanlocs,'badchan')
     badchannels = find(cell2mat({EEG.chanlocs.badchan}));
