@@ -1,26 +1,26 @@
-function varargout = markartifacts2(varargin)
-% MARKARTIFACTS2 MATLAB code for markartifacts2.fig
-%      MARKARTIFACTS2, by itself, creates a new MARKARTIFACTS2 or raises the existing
+function varargout = markartifacts(varargin)
+% markartifacts MATLAB code for markartifacts.fig
+%      markartifacts, by itself, creates a new markartifacts or raises the existing
 %      singleton*.
 %
-%      H = MARKARTIFACTS2 returns the handle to a new MARKARTIFACTS2 or the handle to
+%      H = markartifacts returns the handle to a new markartifacts or the handle to
 %      the existing singleton*.
 %
-%      MARKARTIFACTS2('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in MARKARTIFACTS2.M with the given input arguments.
+%      markartifacts('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in markartifacts.M with the given input arguments.
 %
-%      MARKARTIFACTS2('Property','Value',...) creates a new MARKARTIFACTS2 or raises the
+%      markartifacts('Property','Value',...) creates a new markartifacts or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before markartifacts2_OpeningFcn gets called.  An
+%      applied to the GUI before markartifacts_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to markartifacts2_OpeningFcn via varargin.
+%      stop.  All inputs are passed to markartifacts_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help markartifacts2
+% Edit the above text to modify the response to help markartifacts
 
 % Last Modified by GUIDE v2.5 02-Feb-2012 11:23:44
 
@@ -34,8 +34,8 @@ end
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       [mfilename guisuffix], ...
     'gui_Singleton',  gui_Singleton, ...
-    'gui_OpeningFcn', @markartifacts2_OpeningFcn, ...
-    'gui_OutputFcn',  @markartifacts2_OutputFcn, ...
+    'gui_OpeningFcn', @markartifacts_OpeningFcn, ...
+    'gui_OutputFcn',  @markartifacts_OutputFcn, ...
     'gui_LayoutFcn',  [] , ...
     'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -49,15 +49,15 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-% --- Executes just before markartifacts2 is made visible.
-function markartifacts2_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before markartifacts is made visible.
+function markartifacts_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to markartifacts2 (see VARARGIN)
+% varargin   command line arguments to markartifacts (see VARARGIN)
 
-% Choose default command line output for markartifacts2
+% Choose default command line output for markartifacts
 handles.output = hObject;
 
 if length(varargin) == 0 || length(varargin) > 3
@@ -86,12 +86,12 @@ set(handles.mainFig,'Name', [get(handles.mainFig,'Name') ': ' EEG.setname]);
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes markartifacts2 wait for user response (see UIRESUME)
+% UIWAIT makes markartifacts wait for user response (see UIRESUME)
 % uiwait(handles.mainFig);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = markartifacts2_OutputFcn(hObject, eventdata, handles)
+function varargout = markartifacts_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
