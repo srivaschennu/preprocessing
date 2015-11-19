@@ -1,4 +1,4 @@
-function EEG = rereference(EEG,refmode)
+function EEG = rereference(basename,refmode)
 
 %reference modes
 %1 = common average
@@ -6,6 +6,14 @@ function EEG = rereference(EEG,refmode)
 %3 = linked mastoid
 %4 = none
 %5 = current source density
+
+loadpaths
+
+if ischar(basename)
+    EEG = pop_loadset('filepath',filepath,'filename',[basename '_clean.set']);
+elseif isstruct(basename)
+    EEG = basename;
+end
 
 if isfield(EEG.chanlocs,'badchan')
     badchannels = find(cell2mat({EEG.chanlocs.badchan}));
@@ -26,6 +34,7 @@ if refmode == 4
     return;
 end
 
+if ok
 if isfield(EEG.chaninfo,'ndchanlocs') && isstruct(EEG.chaninfo.ndchanlocs)
     EEG.chaninfo.nodatchans = EEG.chaninfo.ndchanlocs;
     czidx = find(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels}));
@@ -42,7 +51,6 @@ for r = 1:length(refchan)
 end
 refchan = cell2mat(refchan);
 
-if ok
     switch refmode
         case 1
             fprintf('Referencing to common average.\n');
@@ -130,5 +138,11 @@ if ok
             [G,H] = GetGH(sph);
             EEG.data = double(CSD(single(EEG.data),G,H));
             EEG.ref = 'csd';
+    end
+    
+    if ischar(basename)
+        fprintf('Saving to %s.set... ',basename);
+        pop_saveset(EEG,'filepath',filepath,'filename',[basename '.set']);
+        fprintf(' done.\n');
     end
 end

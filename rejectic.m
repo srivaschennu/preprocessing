@@ -9,7 +9,7 @@ param = finputcheck(varargin, { ...
     });
 
 
-destfile = [basename '.set'];
+destfile = [basename '_clean.set'];
 filename = [basename '_epochs.set'];
 EEG = pop_loadset('filename', filename, 'filepath', filepath);
 
