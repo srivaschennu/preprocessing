@@ -1,4 +1,4 @@
-function EEG = rereference(basename,refmode)
+function EEG = rereference(basename,refmode,keepref)
 
 %reference modes
 %1 = common average
@@ -8,6 +8,7 @@ function EEG = rereference(basename,refmode)
 %5 = current source density
 
 loadpaths
+filesuffix = '';
 
 if ischar(basename)
     EEG = pop_loadset('filepath',filepath,'filename',[basename '_clean.set']);
@@ -66,7 +67,9 @@ refchan = cell2mat(refchan);
                 EEG = pop_reref( EEG, [], 'exclude', badchannels,'refloc',EEG.chaninfo.ndchanlocs(czidx));
                 EEG.chaninfo.ndchanlocs(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels})) = [];
             end
-            EEG = pop_select(EEG,'nochannel',refchan);
+            if ~exist('keepref','var') || keepref == 0
+                EEG = pop_select(EEG,'nochannel',refchan);
+            end
             EEG.ref = 'averef';
             
         case 2
@@ -141,8 +144,7 @@ refchan = cell2mat(refchan);
     end
     
     if ischar(basename)
-        fprintf('Saving to %s.set... ',basename);
-        pop_saveset(EEG,'filepath',filepath,'filename',[basename '.set']);
-        fprintf(' done.\n');
+        fprintf('Saving to %s.set.\n',basename);
+        pop_saveset(EEG,'filepath',filepath,'filename',[basename filesuffix '.set']);
     end
 end

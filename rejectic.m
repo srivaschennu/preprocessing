@@ -3,9 +3,10 @@ function rejectic(basename,varargin)
 loadpaths
 
 param = finputcheck(varargin, { ...
-    'prompt' , 'string' , {'on','off'}, 'on'; ...
+    'reject' , 'string' , {'on','off'}, 'on'; ...
     'skip' , 'string' , {'on','off'}, 'off'; ...
     'sortorder', 'integer', [], []; ...
+    'prompt' , 'string' , {'on','off'}, 'on'; ...
     });
 
 
@@ -28,7 +29,7 @@ if strcmp(param.skip,'off')
     assignin('base','EEG',EEG);
     evalin('base','[ALLEEG EEG index] = eeg_store(ALLEEG,EEG,0);');
     
-    if strcmp(param.prompt,'on')
+    if strcmp(param.reject,'on')
         
         if isempty(param.sortorder)
             param.sortorder = 1:size(EEG.icaweights,1);
@@ -41,9 +42,13 @@ if strcmp(param.skip,'off')
         badchan_old = cell2mat({g.eloc_file.badchan});
         
         for comp = 1:35:length(param.sortorder);
-            choice = questdlg(sprintf('Plot component maps %d-%d?',comp,min(comp+34,length(param.sortorder))),...
-                mfilename,'Yes','No','Yes');
-            if ~strcmp(choice,'Yes')
+            if strcmp(param.prompt,'on')
+                choice = questdlg(sprintf('Plot component maps %d-%d?',comp,min(comp+34,length(param.sortorder))),...
+                    mfilename,'Yes','No','Yes');
+                if ~strcmp(choice,'Yes')
+                    break;
+                end
+            elseif comp > 35
                 break;
             end
             pop_selectcomps(EEG, param.sortorder(comp:min(comp+34,length(param.sortorder))));
@@ -74,11 +79,13 @@ if strcmp(param.skip,'off')
         
         EEG.saved = 'no';
         
-        choice = questdlg(sprintf('Overwrite %s?',EEG.filename),...
-            mfilename,'Yes','No','Yes');
-        
-        if ~strcmp(choice,'Yes')
-            return;
+        if strcmp(param.prompt,'on')
+            choice = questdlg(sprintf('Overwrite %s?',EEG.filename),...
+                mfilename,'Yes','No','Yes');
+            
+            if ~strcmp(choice,'Yes')
+                return;
+            end
         end
         
         fprintf('Resaving to %s%s.\n',EEG.filepath,EEG.filename);
