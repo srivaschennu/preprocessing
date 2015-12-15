@@ -10,6 +10,7 @@ param = finputcheck(varargin, { ...
     });
 
 
+destname = [basename '_clean'];
 destfile = [basename '_clean.set'];
 filename = [basename '_epochs.set'];
 EEG = pop_loadset('filename', filename, 'filepath', filepath);
@@ -114,7 +115,7 @@ if strcmp(param.skip,'off')
     end
 end
 
-EEG.setname = basename;
+EEG.setname = destname;
 EEG.filename = destfile;
 fprintf('Saving %s%s.\n', EEG.filepath, EEG.filename);
 pop_saveset(EEG, 'filepath', EEG.filepath, 'filename', EEG.filename);
