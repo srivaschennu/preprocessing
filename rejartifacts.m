@@ -1,4 +1,4 @@
-function varargout = rejartifacts(basename,pbadchan,refmode,prompt,varsort,chanvarthresh,trialvarthresh)
+function varargout = rejartifacts(basename,pbadchan,refmode,prompt,varsort,varthresh)
 
 % pbadchan 1 - delete bad channels; 2 - interpolate bad channels; 3 - do nothing
 % refmode 1 = common average 2 = laplacian average 3 = linked mastoid 4 = none
@@ -7,12 +7,8 @@ function varargout = rejartifacts(basename,pbadchan,refmode,prompt,varsort,chanv
 % chanvarthresh default = 500
 % trialvarthresh default = 250
 
-if ~exist('chanvarthresh','var') || isempty(chanvarthresh)
-    chanvarthresh = 500;
-end
-
-if ~exist('trialvarthresh','var') || isempty(trialvarthresh)
-    trialvarthresh = 250;
+if ~exist('varthresh','var') || isempty(varthresh)
+    varthresh = 1.5;
 end
 
 if ~exist('prompt','var') || isempty(prompt)
@@ -35,7 +31,7 @@ EEG = pop_loadset('filename',[basename '.set'],'filepath',filepath);
 
 if varsort
     assignin('base','EEG',EEG);
-    uiwait(markartifacts(EEG,chanvarthresh,trialvarthresh));
+    uiwait(markartifacts(EEG,varthresh));
     EEG = evalin('base','EEG');
 end
 

@@ -60,19 +60,22 @@ function markartifacts_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for markartifacts
 handles.output = hObject;
 
-if length(varargin) == 0 || length(varargin) > 3
+if isempty(varargin) || length(varargin) > 3
     error('Usage: EEG = markartifacts(EEG, [chanvarthresh, trialvarthresh]);');
-elseif length(varargin) == 1
-    handles.chanvarthresh = 500;
-    handles.trialvarthresh = 250;
-elseif length(varargin) == 2
-    handles.chanvarthresh = varargin{2};
-    handles.trialvarthresh = 500;
-elseif length(varargin) == 3
-    handles.chanvarthresh = varargin{2};
-    handles.trialvarthresh = varargin{3};
 end
+
 EEG = varargin{1};
+
+defstdfac = 1;
+if length(varargin) == 1
+    stdfac = defstdfac;
+elseif length(varargin) == 2
+    stdfac = varargin{2};
+end
+
+handles.chanvarthresh = stdfac;
+handles.trialvarthresh = stdfac;
+
 assignin('base','EEG',EEG);
 
 set(handles.chanEdit,'String',num2str(handles.chanvarthresh));
@@ -216,12 +219,11 @@ function drawchan(handles)
 
 EEG = evalin('base','EEG');
 
-data = EEG.data;
-data = reshape(data,size(EEG.data,1),size(data,2)*size(data,3));
-
-chanvar = var(data,0,2);
+chanvar = var(reshape(EEG.data,size(EEG.data,1),size(EEG.data,2)*size(EEG.data,3)),0,2);
 zerochan = find(chanvar < 0.5);
-chanvar = chanvar - median(chanvar);
+chanvar = (chanvar - median(chanvar)) / std(chanvar);
+
+% chanvar = chanvar - median(chanvar);
 
 badchannels = [find(chanvar > handles.chanvarthresh); zerochan];
 
@@ -245,7 +247,7 @@ bar(handles.chanAxes,chanvar);
 chanlabels = {EEG.chanlocs.labels};
 set(handles.chanAxes,'XLim',[1 EEG.nbchan],'YLim',[0 handles.chanvarthresh*2],...
     'XTick',1:3:EEG.nbchan,'XTickLabel',chanlabels(1:3:end));
-xlabel(handles.chanAxes,'Channels'); ylabel(handles.chanAxes,'Variance');
+xlabel(handles.chanAxes,'Channels'); ylabel(handles.chanAxes,'Z-Score');
 line([1 EEG.nbchan],[handles.chanvarthresh handles.chanvarthresh],...
     'LineStyle','--','LineWidth',2,'Parent',handles.chanAxes);
 
@@ -259,11 +261,11 @@ EEG = evalin('base','EEG');
 
 badchannels = find(cell2mat({EEG.chanlocs.badchan}));
 
-data = EEG.data(setdiff(1:EEG.nbchan,badchannels),:,:);
-data = reshape(data,size(data,1)*size(data,2),size(data,3));
+trialvar = var(reshape(EEG.data(setdiff(1:EEG.nbchan,badchannels),:,:),...
+    (size(EEG.data,1)-length(badchannels))*size(EEG.data,2),size(EEG.data,3)));
+trialvar = (trialvar - median(trialvar)) / std(trialvar);
 
-trialvar = var(data);
-trialvar = trialvar - median(trialvar);
+% trialvar = trialvar - median(trialvar);
 
 EEG.reject.rejmanual = false(1,EEG.trials);
 EEG.reject.rejmanualE = false(EEG.nbchan,EEG.trials);
@@ -274,7 +276,7 @@ set(handles.trialText,'String',sprintf('%d of %d (%d%%) bad', ...
 
 bar(handles.trialAxes,trialvar);
 set(handles.trialAxes,'XLim',[1 EEG.trials],'YLim',[0 handles.trialvarthresh*2]);
-xlabel(handles.trialAxes,'Trials'); ylabel(handles.trialAxes,'Variance');
+xlabel(handles.trialAxes,'Trials'); ylabel(handles.trialAxes,'Z-Score');
 line([1 EEG.trials],[handles.trialvarthresh handles.trialvarthresh],...
     'LineStyle','--','LineWidth',2,'Parent',handles.trialAxes);
 
