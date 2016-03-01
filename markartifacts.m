@@ -244,10 +244,16 @@ set(handles.chanText,'String',chanText);
 bar(handles.chanAxes,chanvar);
 chanlabels = {EEG.chanlocs.labels};
 set(handles.chanAxes,'XLim',[1 EEG.nbchan],'YLim',[0 handles.chanvarthresh*2],...
-    'XTick',1:3:EEG.nbchan,'XTickLabel',chanlabels(1:3:end));
+    'XTick',1:15:EEG.nbchan,'XTickLabel',chanlabels(1:15:end),'FontSize',12);
 xlabel(handles.chanAxes,'Channels'); ylabel(handles.chanAxes,'Variance');
 line([1 EEG.nbchan],[handles.chanvarthresh handles.chanvarthresh],...
     'LineStyle','--','LineWidth',2,'Parent',handles.chanAxes);
+
+axes(handles.topoAxes);
+chanvar(chanvar < 0 | chanvar > handles.chanvarthresh) = 0;
+chanvar = log10(chanvar);
+chanvar(chanvar == -Inf) = 0;
+topoplot(chanvar,EEG.chanlocs,'style','map','maplimits','maxmin');
 
 assignin('base','EEG',EEG);
 
@@ -273,7 +279,7 @@ set(handles.trialText,'String',sprintf('%d of %d (%d%%) bad', ...
     sum(EEG.reject.rejmanual),EEG.trials,round((sum(EEG.reject.rejmanual)/EEG.trials)*100)));
 
 bar(handles.trialAxes,trialvar);
-set(handles.trialAxes,'XLim',[1 EEG.trials],'YLim',[0 handles.trialvarthresh*2]);
+set(handles.trialAxes,'XLim',[1 EEG.trials],'YLim',[0 handles.trialvarthresh*2],'FontSize',12);
 xlabel(handles.trialAxes,'Trials'); ylabel(handles.trialAxes,'Variance');
 line([1 EEG.trials],[handles.trialvarthresh handles.trialvarthresh],...
     'LineStyle','--','LineWidth',2,'Parent',handles.trialAxes);
