@@ -8,7 +8,7 @@ function EEG = rereference(basename,refmode,keepref)
 %5 = current source density
 
 loadpaths
-filesuffix = '';
+filesuffix = '_csd';
 
 if ischar(basename)
     EEG = pop_loadset('filepath',filepath,'filename',[basename '_clean.set']);
@@ -117,7 +117,9 @@ refchan = cell2mat(refchan);
             
         case 5
             fprintf('Computing current source density.\n');
-            EEG = pop_select(EEG,'nochannel',refchan);
+            if ~exist('keepref','var') || keepref == 0
+                EEG = pop_select(EEG,'nochannel',refchan);
+            end
             if ~isempty(czidx)
                 EEG.chanlocs(end+1).labels = EEG.chaninfo.ndchanlocs(czidx).labels;
                 fieldloc = fieldnames(EEG.chaninfo.ndchanlocs(czidx));
@@ -144,7 +146,7 @@ refchan = cell2mat(refchan);
     end
     
     if ischar(basename)
-        fprintf('Saving to %s.set.\n',basename);
+        fprintf('Saving to %s%s.set.\n',basename,filesuffix);
         pop_saveset(EEG,'filepath',filepath,'filename',[basename filesuffix '.set']);
     end
 end
