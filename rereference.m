@@ -1,4 +1,4 @@
-function EEG = rereference(basename,refmode,keepref)
+function EEG = rereference(basename,refmode,keepref,filesuffix)
 
 %reference modes
 %1 = common average
@@ -8,7 +8,14 @@ function EEG = rereference(basename,refmode,keepref)
 %5 = current source density
 
 loadpaths
-filesuffix = '_csd';
+
+if ~exist('keepref','var') || isempty(keepref)
+    keepref = 0;
+end
+
+if ~exist('filesuffix','var') || isempty(filesuffix)
+    filesuffix = '';
+end
 
 if ischar(basename)
     EEG = pop_loadset('filepath',filepath,'filename',[basename '_clean.set']);
