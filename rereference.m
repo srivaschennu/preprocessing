@@ -43,22 +43,16 @@ if refmode == 4
 end
 
 if ok
-if isfield(EEG.chaninfo,'ndchanlocs') && isstruct(EEG.chaninfo.ndchanlocs)
-    EEG.chaninfo.nodatchans = EEG.chaninfo.ndchanlocs;
-    czidx = find(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels}));
-elseif isfield(EEG.chaninfo,'nodatchans') && isstruct(EEG.chaninfo.nodatchans)
-    EEG.chaninfo.ndchanlocs = EEG.chaninfo.nodatchans;
-    czidx = find(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels}));
-else
-    czidx = [];
-end
-
-refchan = {'E57' 'E100'};
-for r = 1:length(refchan)
-    refchan{r} = find(strcmp(refchan{r},{EEG.chanlocs.labels}));
-end
-refchan = cell2mat(refchan);
-
+    if isfield(EEG.chaninfo,'ndchanlocs') && isstruct(EEG.chaninfo.ndchanlocs)
+        EEG.chaninfo.nodatchans = EEG.chaninfo.ndchanlocs;
+        czidx = find(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels}));
+    elseif isfield(EEG.chaninfo,'nodatchans') && isstruct(EEG.chaninfo.nodatchans)
+        EEG.chaninfo.ndchanlocs = EEG.chaninfo.nodatchans;
+        czidx = find(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels}));
+    else
+        czidx = [];
+    end
+    
     switch refmode
         case 1
             fprintf('Referencing to common average.\n');
@@ -74,14 +68,10 @@ refchan = cell2mat(refchan);
                 EEG = pop_reref( EEG, [], 'exclude', badchannels,'refloc',EEG.chaninfo.ndchanlocs(czidx));
                 EEG.chaninfo.ndchanlocs(strcmp('Cz',{EEG.chaninfo.ndchanlocs.labels})) = [];
             end
-            if ~exist('keepref','var') || keepref == 0
-                EEG = pop_select(EEG,'nochannel',refchan);
-            end
             EEG.ref = 'averef';
             
         case 2
             fprintf('Referencing to laplacian average.\n');
-            EEG = pop_select(EEG,'nochannel',refchan);
             if ~isempty(czidx)
                 EEG.chanlocs(end+1).labels = EEG.chaninfo.ndchanlocs(czidx).labels;
                 fieldloc = fieldnames(EEG.chaninfo.ndchanlocs(czidx));
@@ -101,6 +91,13 @@ refchan = cell2mat(refchan);
             EEG.ref = 'laplacian';
             
         case 3
+            
+            [refchan,ok] = listdlg2('ListString',{EEG.chanlocs.labels},'Name','Reference Channels',...
+                'PromptString','Select channels for offline rereferencing:');
+            if ~ok
+                error('No valid reference channels selected.');
+            end
+            
             refchan = setdiff(refchan,badchannels);
             fprintf('Referencing to %s.\n',cell2mat({EEG.chanlocs(refchan).labels}));
             EEG.ref = cell2mat({EEG.chanlocs(refchan).labels});
@@ -124,9 +121,6 @@ refchan = cell2mat(refchan);
             
         case 5
             fprintf('Computing current source density.\n');
-            if ~exist('keepref','var') || keepref == 0
-                EEG = pop_select(EEG,'nochannel',refchan);
-            end
             if ~isempty(czidx)
                 EEG.chanlocs(end+1).labels = EEG.chaninfo.ndchanlocs(czidx).labels;
                 fieldloc = fieldnames(EEG.chaninfo.ndchanlocs(czidx));
@@ -141,7 +135,7 @@ refchan = cell2mat(refchan);
             end
             % EEGLAB has nose direction as X-axis and right ear direction
             % as Y-axis, whereas cart2sph expects the reverse. Hence swap X
-            % and Y below            
+            % and Y below
             chanlocs = cat(2,cell2mat({EEG.chanlocs.Y})',cell2mat({EEG.chanlocs.X})',cell2mat({EEG.chanlocs.Z})');
             [sph.theta, sph.phi] = cart2sph(chanlocs(:,1),chanlocs(:,2),chanlocs(:,3));
             sph.theta = (180/pi) * sph.theta;

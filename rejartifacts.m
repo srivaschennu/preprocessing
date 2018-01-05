@@ -56,7 +56,7 @@ badtrials = find(EEG.reject.rejmanual);
 
 if prompt && (~exist('pbadchan','var') || isempty(pbadchan))
     pbadchanmodes = {'Delete','Interpolate','Do Nothing'};
-    [pbadchan,ok] = listdlg('ListString',pbadchanmodes,'SelectionMode','single','Name','Bad Channels',...
+    [pbadchan,ok] = listdlg2('ListString',pbadchanmodes,'SelectionMode','single','Name','Bad Channels',...
         'PromptString','Process bad channels?');
     
     if ~ok
