@@ -24,15 +24,9 @@ function varargout = markartifacts(varargin)
 
 % Last Modified by GUIDE v2.5 02-Feb-2012 11:23:44
 
-if ismac || isunix
-    guisuffix = '_mac';
-elseif ispc
-    guisuffix = '_win';
-end
-
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
-gui_State = struct('gui_Name',       [mfilename guisuffix], ...
+gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
     'gui_OpeningFcn', @markartifacts_OpeningFcn, ...
     'gui_OutputFcn',  @markartifacts_OutputFcn, ...
