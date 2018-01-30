@@ -42,6 +42,8 @@ if strcmp(param.skip,'off')
         g = get(comptimefig, 'UserData');
         badchan_old = cell2mat({g.eloc_file.badchan});
         
+        curcmap = get(0,'DefaultFigureColormap');
+        set(0,'DefaultFigureColormap',feval('jet'));
         for comp = 1:35:length(param.sortorder);
             if strcmp(param.prompt,'on')
                 choice = questdlg(sprintf('Plot component maps %d-%d?',comp,min(comp+34,length(param.sortorder))),...
@@ -71,6 +73,7 @@ if strcmp(param.skip,'off')
                 eegplot('drawp',0,[],comptimefig);
             end
         end
+        set(0,'DefaultFigureColormap',curcmap);
         
         if ishandle(comptimefig)
             uiwait(comptimefig);
