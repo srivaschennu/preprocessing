@@ -36,7 +36,7 @@ if strcmp(param.skip,'off')
             param.sortorder = 1:size(EEG.icaweights,1);
         end
         
-        EEG = VisEd(EEG,2,['[' num2str(param.sortorder) ']'],{});
+        EEG = VisEd(EEG,2,['[' num2str(param.sortorder) ']'],{},'spacing',15);
         comptimefig = gcf;
         set(comptimefig,'Name',basename);
         g = get(comptimefig, 'UserData');
