@@ -7,12 +7,12 @@ function varargout = rejartifacts(basename,pbadchan,refmode,prompt,varsort,chanv
 % chanvarthresh default = 500
 % trialvarthresh default = 250
 
-if ~exist('chanvarthresh','var') || isempty(chanvarthresh)
-    chanvarthresh = 500;
+if ~exist('chanvarthresh','var')
+    chanvarthresh = [];
 end
 
-if ~exist('trialvarthresh','var') || isempty(trialvarthresh)
-    trialvarthresh = 250;
+if ~exist('trialvarthresh','var')
+    trialvarthresh = [];
 end
 
 if ~exist('prompt','var') || isempty(prompt)

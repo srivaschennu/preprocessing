@@ -57,20 +57,17 @@ handles.output = hObject;
 if length(varargin) == 0 || length(varargin) > 3
     error('Usage: EEG = markartifacts(EEG, [chanvarthresh, trialvarthresh]);');
 elseif length(varargin) == 1
-    handles.chanvarthresh = 500;
-    handles.trialvarthresh = 250;
+    handles.chanvarthresh = [];
+    handles.trialvarthresh = [];
 elseif length(varargin) == 2
     handles.chanvarthresh = varargin{2};
-    handles.trialvarthresh = 500;
+    handles.trialvarthresh = [];
 elseif length(varargin) == 3
     handles.chanvarthresh = varargin{2};
     handles.trialvarthresh = varargin{3};
 end
 EEG = varargin{1};
 assignin('base','EEG',EEG);
-
-set(handles.chanEdit,'String',num2str(handles.chanvarthresh));
-set(handles.trialEdit,'String',num2str(handles.trialvarthresh));
 
 drawchan(handles);
 drawtrial(handles);
@@ -208,6 +205,9 @@ end
 %% Function to update channel variance plot
 function drawchan(handles)
 
+
+set(handles.trialEdit,'String',num2str(handles.trialvarthresh));
+
 EEG = evalin('base','EEG');
 
 data = EEG.data;
@@ -215,7 +215,15 @@ data = reshape(data,size(EEG.data,1),size(data,2)*size(data,3));
 
 chanvar = var(data,0,2);
 zerochan = find(chanvar < 0.5);
+
 chanvar = chanvar - median(chanvar);
+
+if isempty(handles.chanvarthresh)
+    %calculate median absolute deviation
+    handles.chanvarthresh = round(median(abs(chanvar))*3);
+end
+
+set(handles.chanEdit,'String',num2str(handles.chanvarthresh));
 
 badchannels = [find(chanvar > handles.chanvarthresh); zerochan];
 
@@ -263,7 +271,15 @@ data = EEG.data(setdiff(1:EEG.nbchan,badchannels),:,:);
 data = reshape(data,size(data,1)*size(data,2),size(data,3));
 
 trialvar = var(data);
+
 trialvar = trialvar - median(trialvar);
+
+if isempty(handles.trialvarthresh)
+    %calculate median absolute deviation
+    handles.trialvarthresh = round(median(abs(trialvar))*3);
+end
+
+set(handles.trialEdit,'String',num2str(handles.trialvarthresh));
 
 EEG.reject.rejmanual = false(1,EEG.trials);
 EEG.reject.rejmanualE = false(EEG.nbchan,EEG.trials);
