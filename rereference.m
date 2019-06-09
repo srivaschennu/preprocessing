@@ -1,11 +1,35 @@
 function EEG = rereference(basename,refmode,keepref,filesuffix)
 
-%reference modes
-%1 = common average
-%2 = laplacian average
-%3 = linked mastoid
-%4 = none
-%5 = current source density
+% Copyright (C) 2018 Srivas Chennu, University of Kent and University of Cambrige,
+% srivas@gmail.com
+% 
+%
+% Re-references data according to one of the following choices, specified
+% by the refmode input.
+% 
+% refmode:
+% 1 = common average
+% 2 = laplacian average
+% 3 = linked mastoid
+% 4 = none
+% 5 = current source density
+%
+% keepref: this parameter currently does nothing
+% filesuffix: optional suffix to append to re-referenced file.
+%
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 loadpaths
 

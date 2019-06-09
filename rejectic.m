@@ -1,5 +1,27 @@
 function rejectic(basename,varargin)
 
+% Copyright (C) 2018 Srivas Chennu, University of Kent and University of Cambrige,
+% srivas@gmail.com
+% 
+% 
+% Visualise ICs using EEGLAB in groups of 35, and enable user to mark noisy ones.
+% Delete marked ICs and project them back into data space.
+% 
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+
 loadpaths
 
 param = finputcheck(varargin, { ...

@@ -1,11 +1,34 @@
 function varargout = rejartifacts(basename,pbadchan,refmode,prompt,varsort,chanvarthresh,trialvarthresh)
 
-% pbadchan 1 - delete bad channels; 2 - interpolate bad channels; 3 - do nothing
-% refmode 1 = common average 2 = laplacian average 3 = linked mastoid 4 = none
-% prompt 1 = manual mode 0 = automatic
-% varsort 1 = display channel and trial variance 0 = off
-% chanvarthresh default = 500
-% trialvarthresh default = 250
+% Copyright (C) 2018 Srivas Chennu, University of Kent and University of Cambrige,
+% srivas@gmail.com
+% 
+%
+% Rejects noisy (bad) channels and epochs based on variance. Uses a quasi-automated approach
+% in which a pre-specified rejection threshold can be adjusted if necessary.
+% Eventually rereferences data as specified.
+%
+% Input arguments:
+% pbadchan - how to process bad channels: 1 - delete bad channels; 2 - interpolate bad channels; 3 - do nothing
+% refmode - re-referencng option: 1 = common average; 2 = laplacian average; 3 = linked mastoid; 4 = none
+% prompt - prompt user before writing output?: 1 = manual mode; 0 = automatic
+% varsort - display channel and trial variance?: 1 = on; 0 = off
+% chanvarthresh - channel variance threshold: default = 500
+% trialvarthresh - trial variance threshold: default = 250
+%
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 if ~exist('chanvarthresh','var')
     chanvarthresh = [];

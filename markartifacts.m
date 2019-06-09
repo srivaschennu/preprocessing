@@ -1,28 +1,26 @@
 function varargout = markartifacts(varargin)
-% markartifacts MATLAB code for markartifacts.fig
-%      markartifacts, by itself, creates a new markartifacts or raises the existing
-%      singleton*.
-%
-%      H = markartifacts returns the handle to a new markartifacts or the handle to
-%      the existing singleton*.
-%
-%      markartifacts('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in markartifacts.M with the given input arguments.
-%
-%      markartifacts('Property','Value',...) creates a new markartifacts or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before markartifacts_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to markartifacts_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help markartifacts
+% Copyright (C) 2018 Srivas Chennu, University of Kent and University of Cambrige,
+% srivas@gmail.com
+% 
+%
+% Marks noisy (bad) channels and epochs based on variance. Uses a quasi-automated approach
+% in which a pre-specified rejection threshold can be visually adjusted if necessary.
+%
+%
+% This program is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+% 
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+% 
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-% Last Modified by GUIDE v2.5 02-Feb-2012 11:23:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
